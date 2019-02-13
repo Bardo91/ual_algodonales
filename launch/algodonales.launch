@@ -1,0 +1,35 @@
+<!--
+The MIT License (MIT)
+Copyright (c) 2016 GRVC University of Seville
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<launch>
+
+	<arg name="aci_backend" default="ros_control"/>
+
+    <!-- Launch Gazebo simulation -->
+	<rosparam param="/use_sim_time">true</rosparam>
+    <node pkg="px4_bringup" type="launch_gzworld.py" name="gazebo_world" output="screen"
+    args="-physics=ode -world=$(find ual_algodonales)/worlds/aeroarms.world
+		  -add_model_path=$(find ual_algodonales)/models
+		  -description_package=robots_description">
+		<rosparam param="sim_origin">[37.558542, -5.931074, 7.89]</rosparam>  <!-- [lat,lon,alt] -->
+	</node>
+
+	<!-- Launch robot id=1 -->
+	<include file="$(find px4_bringup)/launch/spawn_robot.launch">
+		<arg name="robot_model" value="aeroarms"/>
+		<arg name="id" value="1"/>
+		<arg name="description_package" value="robots_description"/>
+		<arg name="material" value="Orange"/>
+        <arg name="x" value="0"/>
+        <arg name="y" value="0.0"/>
+        <arg name="z" value="0.2"/>
+        <arg name="yaw" value="0"/>
+	</include>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_broadcaster" args="0 0 0 0 0 0 1 uav_1 base_link" />
+
+</launch>
